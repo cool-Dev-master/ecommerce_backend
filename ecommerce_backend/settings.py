@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-xro_e9y6r6)aa*8ycgffwtgentr(2$g=o7(d&5s14r-d8l#icc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'ecommerce_backend.middleware.AuthenticationMiddleware'
 ]
 
 ROOT_URLCONF = 'ecommerce_backend.urls'

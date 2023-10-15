@@ -8,7 +8,7 @@ class Product(models.Model):
     price = models.IntegerField(default=0)
     description = models.CharField(max_length=500, default=None, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    isDeleted = models.BooleanField(default=False)
+    isDeleted = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
         return self.name

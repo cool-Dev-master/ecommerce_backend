@@ -1,12 +1,14 @@
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+# from django.contrib.auth.tokens import default_token_generator
 # from django.shortcuts import render
 from django.db import IntegrityError
 # from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+# from django.middleware.csrf import get_token
 import json
 from .models import Customer
 
@@ -78,19 +80,26 @@ def register_customer(request):
 @csrf_exempt
 @require_POST
 def login_customer(request):
-    username = request.POST.get('username')
-    phone_number = request.POST.get('phone')
+    data = json.loads(request.body)
+    username = data.get('username')
+    phone_number = data.get('phone')
+    customer_details = None
 
     # Authenticate the user with an empty password
     user = authenticate(request, username=username, password='')
-    # print(user)
-    # print(f"user: {user}")
     if user is not None:
+        # user_details = { 'id': user.id, 'username': user.username }
         # Verify corresponding customer with the provided username and phone number
         try:
             customer = Customer.objects.get(user=user, phone_number=phone_number)
-            # print(customer)
-            # print(f"customer: {customer}")
+            customer_details = {
+                'id': customer.id,
+                'user_id': user.id,
+                'user_name': user.username,
+                'last_login': user.last_login,
+                # 'user_name': user.get('username', None),
+                'phone_number': customer.phone_number,
+            }
         except Customer.DoesNotExist:
             return JsonResponse({'message': 'Login failed - Customer verification failed'}, status=401)
 
@@ -98,9 +107,24 @@ def login_customer(request):
     if user is not None:
         # Log in the user
         login(request, user)
-        return JsonResponse({'message': 'Login successful', 'result': {'user': list(user), 'customer': list(customer)}}, status=200)
+        # csrf = get_token(request)
+        # authentication_token = default_token_generator.make_token(user)
+        response = {
+            'message': 'Login successful',
+            'result': { 'user': customer_details},
+            # 'csrf_token': csrf,
+            # 'token': authentication_token
+        }
+        return JsonResponse(response, status=200)
+        # return JsonResponse({'message': 'Login successful', 'result': { 'user': customer_details }}, status=200)
     else:
         return JsonResponse({'message': 'Login failed'}, status=401)
+
+@csrf_exempt
+def logout_customer(request):
+    # Log out the user
+    logout(request)
+    return JsonResponse({'message': 'Logout successful'}, status=200)
 
 @csrf_exempt
 def CustomersView(request, pk = None):
