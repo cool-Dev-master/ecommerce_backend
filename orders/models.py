@@ -5,7 +5,7 @@ from products.models import Product
 
 # Create your models here.
 
-class Orders(models.Model):
+class Order(models.Model):
     id = models.BigAutoField(primary_key=True, auto_created=True)
     customer_id = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     product_id = models.ForeignKey(Product, on_delete=models.DO_NOTHING)

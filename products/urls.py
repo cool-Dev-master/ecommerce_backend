@@ -9,5 +9,4 @@ urlpatterns = [
     path('get/', ProductsView, name='list_products'),
     path('get/<int:pk>', ProductsView, name='get_products'),
     path('create/', ProductsCreateUpdate, name='products_create_update'),
-    # path('products/', ProductsView, name='get_products')
 ]
