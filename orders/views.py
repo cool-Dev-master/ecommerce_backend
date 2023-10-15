@@ -57,8 +57,8 @@ def OrdersCreate(request):
             cancelled = data.get('cancelled', False)
 
             order = Order(
-                customer_id=customer,
-                product_id=product,
+                customer=customer,
+                product=product,
                 quantity=quantity,
                 cancelled=cancelled
             )
@@ -71,4 +71,4 @@ def OrdersCreate(request):
             return JsonResponse({ 'result': order, "customer": customer, "response": 'Successfully created' }, status = 201)
         except Exception as e:
             print(f"Exception: {e}")
-            return JsonResponse({ 'response': 'Failed to create product.' }, status = 400)
+            return JsonResponse({ 'response': 'Failed to create order.' }, status = 400)
