@@ -31,7 +31,7 @@ def OrdersView(request, pk = None):
         else:
             try:
                 data = list(Order.objects.all().filter(isActive = True).values())
-                print(data)
+                # print(request.user.is_authenticated, "user is_authenticated")
                 return JsonResponse({ 'result': data, 'records': len(data) }, status = 200)
             except Order.DoesNotExist:
                 return noDataFound()
