@@ -12,7 +12,7 @@ urlpatterns = [
     path('update/<int:pk>', ProductsUpdate, name='products_update'),
 
     path('category/get/', CategoryView, name='list_category'),
-    path('category/get/<int:pk>', CategoryView, name='get_category'),
+    path('category/get/<str:pk>', CategoryView, name='get_category'),
     path('category/create', CategoryCreate, name='category_create'),
     path('category/update/<int:pk>', CategoryUpdate, name='category_update'),
 ]
