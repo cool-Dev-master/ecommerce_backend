@@ -1,19 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from pymongo import MongoClient
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.models import model_to_dict
 import json
-from bson import ObjectId
 from products.models import Product, Category
-# from .utils import MongoDBManager
-# Create your views here.
 
-# mongo_manager = MongoDBManager()
+# Create your views here.
 @csrf_exempt
 def Home(req):
-    msg = "<h1>Welcome server is running !</h1>"
+    msg = "Welcome server is running"
     return HttpResponse(msg)
 
 def noDataFound():
@@ -24,20 +20,6 @@ def getFileData(request, key, default=None):
 
 def getPostData(request, key, default = False):
     return request.POST.get(key, default)
-
-def replaceObjectID(data):
-    if isinstance(data, list):
-        return [{'id': str(val.pop('_id')), **val} for val in data]
-    elif isinstance(data, dict):
-        return {'id': str(data.pop('_id')), **data}
-    return data
-
-
-def get_mongodb_collection():
-    client = MongoClient(settings.MONGODB_URI)
-    db = client['dev']
-    # db = client.get_database()
-    return db['categories']
 
 @csrf_exempt
 def ProductsCreate(request, pk = None):
@@ -171,119 +153,8 @@ def ProductsView(request, pk = None):
 
 # category apis
 
-
 @csrf_exempt
 def CategoryView(request, pk = None):
-    if(request.method == 'GET'):
-        if pk:
-            try:
-                category = get_mongodb_collection().find_one({'_id': ObjectId(pk)})
-                if category:
-                    category = replaceObjectID(category)
-                    return JsonResponse({ 'result': category }, status = 200)
-                else:
-                    raise 'Error not found'
-            except Exception as e:
-                # print(e)
-                return noDataFound()
-        else:
-            try:
-                print("loading db....")
-                categories = list(get_mongodb_collection().find())
-                data = [{'id': str(cat.pop('_id')), **cat} for cat in categories]
-                # data = [{'id': str(cat['_id']), **cat} for cat in categories]
-                # data = [{'id': str(cat['_id']), 'name': cat['name']} for cat in categories]
-                print(data)
-                # print(list(categories))
-                # client = MongoClient(settings.MONGODB_URI)
-                # db = mongo_manager.get_database(database_name="dev")
-                # collection = db["testing"]
-                # print(collection, "collection")
-                # documents = list(collection.find())
-                # print(documents, "documents")
-                # mongo_manager.close_connection()
-
-                # category = list(Category.objects.all().values())
-                return JsonResponse({ 'result': data, 'records': len(data) }, status = 200)
-            except:
-                return noDataFound()
-
-
-@csrf_exempt
-def CategoryCreate(request):
-    if(request.method == 'POST'):
-        data = json.loads(request.body)
-        if 'name' not in data:
-            return JsonResponse({ 'response': 'Name required' }, status = 400)
-
-        name = data['name']
-        
-        # Check if a category with the same name already exists
-        existing_category = get_mongodb_collection().find_one({'name': name})
-
-        if existing_category:
-            data = {
-                'id': str(existing_category['_id']),
-                'name': existing_category['name']
-            }
-            return JsonResponse({'data': data, 'message': 'Category with the same name already exists'}, status=400)
-
-        category_data = {'name': name}
-        result = get_mongodb_collection().insert_one(category_data)
-        inserted_id = str(result.inserted_id)
-
-        # Return the inserted data in the JSON response
-        data = {
-            'id': inserted_id,
-            'name': name
-        }
-
-        return JsonResponse({'result': data, 'response': 'Successfully created'}, status=201)
-        # # Check if a category with the same name already exists
-        # existing_category = get_mongodb_collection().find_one({'name': name})
-
-        # if existing_category:
-        #     print(existing_category)
-        #     data = {'id': str(existing_category['_id']), 'name': existing_category['name']}
-        #     return JsonResponse({'data': data, 'message': 'Category with the same name already exists'}, status=400)
-
-        # # try:
-        # #     # check exist category
-        # #     category = Category.objects.get(name=name)
-        # #     if category:
-        # #         return JsonResponse({ 'response': 'Category already exist' }, status = 400)
-        # # except Category.DoesNotExist:
-        # #     pass
-
-        # category_data = {'name': name}
-        # result = get_mongodb_collection().insert_one(category_data)
-        # inserted_id = str(result.inserted_id)
-        
-        # # Retrieve the inserted document
-        # inserted_category = get_mongodb_collection().find_one({'_id': ObjectId(inserted_id)})
-
-        # # Return the inserted data in the JSON response
-        # data = {
-        #     'id': inserted_id,
-        #     'name': inserted_category['name']
-        # }
-        # print(data, "result")
-        # # return JsonResponse({'id': inserted_id, 'message': 'Category created successfully'}, status=201)
-        # # category = Category(
-        # #     name=name
-        # # )
-        # # category.save()
-        # # product_dict = model_to_dict(category)
-
-        # try:
-        #     return JsonResponse({ 'result': data, "response": 'Successfully created' }, status = 201)
-        # except Exception as e:
-        #     print(f"Exception: {e}")
-        #     return JsonResponse({ 'response': 'Failed to create category.' }, status = 400)
-        
-
-@csrf_exempt
-def CategoryViewOld(request, pk = None):
     if(request.method == 'GET'):
         if pk:
             try:
@@ -295,12 +166,12 @@ def CategoryViewOld(request, pk = None):
         else:
             try:
                 category = list(Category.objects.all().values())
-                return JsonResponse({ 'documents': documents, 'result': category, 'records': len(category) }, status = 200)
+                return JsonResponse({ 'result': category, 'records': len(category) }, status = 200)
             except Category.DoesNotExist:
                 return noDataFound()
 
 @csrf_exempt
-def CategoryCreateOld(request):
+def CategoryCreate(request):
     if(request.method == 'POST'):
         data = json.loads(request.body)
         if 'name' not in data:
