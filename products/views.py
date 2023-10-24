@@ -9,7 +9,7 @@ from products.models import Product, Category
 # Create your views here.
 @csrf_exempt
 def Home(req):
-    msg = "Welcome server is running"
+    msg = "<h2>Welcome server is running !</h2>"
     return HttpResponse(msg)
 
 def noDataFound():

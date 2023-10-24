@@ -163,3 +163,4 @@ uploads/
 customers/migrations/
 orders/migrations/
 products/migrations/
+reviews/migrations/

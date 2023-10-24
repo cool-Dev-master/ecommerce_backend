@@ -118,7 +118,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "coolDev.pythonanywhere.com"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000"

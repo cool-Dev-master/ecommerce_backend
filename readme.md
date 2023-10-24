@@ -24,6 +24,8 @@ venv\Scripts\activate
 
 pip install -r requirements.txt
 
+pip freeze > requirements.txt
+
 to run : ./manage.py runserver
 
 
@@ -64,3 +66,8 @@ python manage.py startapp --template=test-driven-app app_name
 
 # Run the flush command to delete db all data
 python manage.py flush
+
+cd /path/to/your/project
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
